@@ -3,10 +3,9 @@ import pandas as pd
 from fuzzywuzzy import process
 import re
 
-# Function to extract price range from user prompt
 def extract_price_range(prompt):
-    # Regular expression pattern to match price range specified as "less than", "more than", or "between"
-    pattern = r'(less\s*than|under|more\s*than|over|between)\s*(\d+)(?:\s*and\s*(\d+))?'
+    # Regular expression pattern to match a variety of expressions for price ranges
+    pattern = r'(?:less\s*than|under|less\s*then|below|lower\s*than|lower\s*then|cheaper\s*than|cheaper\s*then|less\s*expensive\s*than|less\s*expensive\s*then|more\s*than|over|more\s*then|above|higher\s*than|higher\s*then|pricier\s*than|pricier\s*then|more\s*expensive\s*than|more\s*expensive\s*then|between)\s*(\d+)(?:\s*and\s*(\d+))?'
     match = re.search(pattern, prompt)
     if match:
         comparison_operator = match.group(1).strip()  # Extract the comparison operator
@@ -15,6 +14,7 @@ def extract_price_range(prompt):
         return comparison_operator, lower_limit, upper_limit
     else:
         return None, None, None  # Return None for all values if no match found
+
 
 # Function to suggest products based on user prompt
 def suggest_products(prompt):
@@ -27,7 +27,6 @@ def suggest_products(prompt):
         'trousers': 'trousers.csv',
         'blazers': 'blazers.csv',
         'jackets': 'jackets.csv',
-        'suits': 'suits.csv',
         'shorts': 'shorts.csv',
         'shoes': 'shoes.csv',
         'bags': 'bags_backpacks.csv',
@@ -87,7 +86,7 @@ def suggest_products(prompt):
         return df[required_columns].head(5).to_dict(orient='records')
 
 
-user_prompt = "show me accessories between 500 and 1000"
+user_prompt = "show me bags between 1000 and 3000"
 recommendations = suggest_products(user_prompt)
 for i in recommendations:
     print(i, end="\n\n")
