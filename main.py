@@ -4,8 +4,8 @@ from fuzzywuzzy import process
 import re
 
 def extract_price_range(prompt):
-    # Regular expression pattern to match a variety of expressions for price ranges
-    pattern = r'(?:less\s*than|under|less\s*then|below|lower\s*than|lower\s*then|cheaper\s*than|cheaper\s*then|less\s*expensive\s*than|less\s*expensive\s*then|more\s*than|over|more\s*then|above|higher\s*than|higher\s*then|pricier\s*than|pricier\s*then|more\s*expensive\s*than|more\s*expensive\s*then|between)\s*(\d+)(?:\s*and\s*(\d+))?'
+    # Regular expression pattern to match price range specified as various expressions
+    pattern = r'(less\s*than|under|lower\s*than|cheaper\s*than|more\s*than|over|higher\s*than|pricier\s*than|between|inside|within)\s*(\d+)(?:\s*and\s*(\d+))?'
     match = re.search(pattern, prompt)
     if match:
         comparison_operator = match.group(1).strip()  # Extract the comparison operator
@@ -14,6 +14,7 @@ def extract_price_range(prompt):
         return comparison_operator, lower_limit, upper_limit
     else:
         return None, None, None  # Return None for all values if no match found
+
 
 
 # Function to suggest products based on user prompt
@@ -73,9 +74,9 @@ def suggest_products(prompt):
     df['price'] = pd.to_numeric(df['price'], errors='coerce')
     
     # Filter products based on price range
-    if comparison_operator == "less than":
+    if comparison_operator in ["less than", "under", "less then", "below", "lower than", "lower then", "cheaper than", "cheaper then", "less expensive than", "less expensive then", "inside", "within"]:
         df = df[df['price'] < min_price]
-    elif comparison_operator == "more than":
+    elif comparison_operator in ["more than", "over", "more then", "above", "higher than", "higher then", "pricier than", "pricier then", "more expensive than", "more expensive then"]:
         df = df[df['price'] > min_price]
     elif comparison_operator == "between":
         df = df[(df['price'] >= min_price) & (df['price'] <= max_price)]
